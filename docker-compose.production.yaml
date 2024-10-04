@@ -2,16 +2,16 @@ version: '3'
 
 services:
   base: &base
-    image: hablei-chatwoot
+    image: hablei-chatwoot:v2
     env_file: .env ## Change this file for customized env variables
     volumes:
       - /data/storage:/app/storage
 
   rails:
     <<: *base
-    depends_on:
-      - postgres
-      - redis
+    # depends_on:
+    #   - postgres
+    #   - redis
     ports:
       - '127.0.0.1:3000:3000'
     environment:
@@ -24,9 +24,9 @@ services:
 
   sidekiq:
     <<: *base
-    depends_on:
-      - postgres
-      - redis
+    # depends_on:
+    #   - postgres
+    #   - redis
     environment:
       - NODE_ENV=production
       - RAILS_ENV=production
@@ -34,25 +34,25 @@ services:
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
     restart: always
 
-  postgres:
-    image: postgres:12
-    restart: always
-    ports:
-      - '127.0.0.1:5432:5432'
-    volumes:
-      - /data/postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      # Please provide your own password.
-      - POSTGRES_PASSWORD=admin123
+  # postgres:
+  #   image: postgres:12
+  #   restart: always
+  #   ports:
+  #     - '127.0.0.1:5432:5432'
+  #   volumes:
+  #     - /data/postgres:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_DB=production_hablei
+  #     - POSTGRES_USER=hablei
+  #     # Please provide your own password.
+  #     - POSTGRES_PASSWORD=admin123
 
-  redis:
-    image: redis:alpine
-    restart: always
-    command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
-    env_file: .env
-    volumes:
-      - /data/redis:/data
-    ports:
-      - '127.0.0.1:6379:6379'
+  # redis:
+  #   image: redis:alpine
+  #   restart: always
+  #   command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
+  #   env_file: .env
+  #   volumes:
+  #     - /data/redis:/data
+  #   ports:
+  #     - '127.0.0.1:6379:6379'
